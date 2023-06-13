@@ -1,2 +1,3 @@
 # quick-minesweeper
-Small minesweeper demo
+
+Small minesweeper demo using React, Typescript, and Vite

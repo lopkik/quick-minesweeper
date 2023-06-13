@@ -1,0 +1,32 @@
+#root {
+  height: 100%;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.app-header {
+  width: 100%;
+  background-color: pink;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 16px 0px;
+}
+
+.app-body {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
