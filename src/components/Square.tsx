@@ -1,14 +1,23 @@
-import React from "react"
+import React from "react";
 
-export const Square = () => {
-  const [revealed, setRevealed] = React.useState(false)
+interface SquareProps extends BoardSquare {
+  x: number;
+  y: number;
+}
+
+export const Square = (props: SquareProps) => {
+  const { isRevealed, value } = props;
 
   return (
     <div
-      onClick={() => setRevealed(true)}
-      style={{ backgroundColor: revealed ? "green" : "red" }}
+      style={{
+        backgroundColor: isRevealed ? "green" : "red",
+        width: 50,
+        height: 50,
+        border: "1px solid black",
+      }}
     >
-      Square
+      {value === -1 ? "BBB" : value}
     </div>
-  )
-}
+  );
+};
