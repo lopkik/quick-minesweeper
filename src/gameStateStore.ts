@@ -1,44 +1,39 @@
 import { create } from "zustand";
-import { initialBoard } from "./constants";
+import { BOMB_VALUE, initialBoard } from "./constants";
 
 interface GameState {
+  gameSettings: GameSettings;
   gameStatus: GameStatus;
+  revealedSquares: number;
   board: BoardSquare[][];
-  generateBoard: (
-    width: number,
-    height: number,
-    mineCount: number,
-    startXIndex: number,
-    startYIndex: number
-  ) => void;
+  checkWinCondition: () => void;
+  generateStartingBoard: (startXIndex: number, startYIndex: number) => void;
+  revealSquare: (x: number, y: number) => void;
+  revealSurroundingSquares: (x: number, y: number) => void;
+  toggleIsFlaggedAt: (x: number, y: number, prevIsFlagged: boolean) => void;
+  setGameSettings: (newGameSettings: GameSettings) => void;
 }
 
-export const useGameStateStore = create<GameState>((set) => ({
+export const useGameStateStore = create<GameState>((set, get) => ({
+  gameSettings: {
+    width: 10,
+    height: 10,
+    mineCount: 10,
+  },
   gameStatus: "WAITING_TO_BEGIN",
+  revealedSquares: 0,
   board: initialBoard,
-  generateBoard: (
-    width: number,
-    height: number,
-    mineCount: number,
-    startXIndex: number,
-    startYIndex: number
-  ) => {
-    // Randomly generates bomb coords such that none are on the first square clicked
-    // or any surrounding squares
-    const bombCoordsSet = new Set<string>();
-    const coordsInRangeOfStart = getSurroundingCoords(
-      startXIndex,
-      startYIndex,
-      width,
-      height
-    );
-    coordsInRangeOfStart.add(`${startXIndex}-${startYIndex}`);
-    while (bombCoordsSet.size < mineCount) {
-      const bombX = Math.floor(Math.random() * width);
-      const bombY = Math.floor(Math.random() * height);
-      if (!coordsInRangeOfStart.has(`${bombX}-${bombY}`))
-        bombCoordsSet.add(`${bombX}-${bombY}`);
-    }
+  checkWinCondition: () => {
+    const {
+      revealedSquares,
+      gameSettings: { width, height, mineCount },
+    } = get();
+    if (width * height - revealedSquares === mineCount)
+      set({ gameStatus: "WON" });
+  },
+  generateStartingBoard: (startXIndex, startYIndex) => {
+    const { width, height } = get().gameSettings;
+    const bombCoordsSet = generateBombCoords(startXIndex, startYIndex);
 
     // Generates new board with only bombs marked
     const newBoard: BoardSquare[][] = [];
@@ -47,7 +42,9 @@ export const useGameStateStore = create<GameState>((set) => ({
       for (let x = 0; x < width; x++) {
         newBoard[y].push({
           isRevealed: false,
+          isFlagged: false,
           value: bombCoordsSet.has(`${x}-${y}`) ? -1 : 0,
+          surroundingFlagCount: 0,
         });
       }
     }
@@ -65,7 +62,86 @@ export const useGameStateStore = create<GameState>((set) => ({
         }
       }
     }
-    set({ board: newBoard });
+
+    set({ board: newBoard, gameStatus: "RUNNING" });
+  },
+  revealSquare: (x, y) => {
+    const board = get().board;
+    if (board[y][x].isFlagged) return;
+    if (board[y][x].value === BOMB_VALUE) {
+      // lose the game, reveal all bombs
+      set({ gameStatus: "LOST" });
+      return;
+    }
+    if (board[y][x].value === 0 && !board[y][x].isRevealed) {
+      set((state) => {
+        const newBoard = [...state.board];
+        newBoard[y][x].isRevealed = true;
+        return {
+          ...state,
+          board: newBoard,
+          revealedSquares: state.revealedSquares + 1,
+        };
+      });
+      const surroundingCoords = getSurroundingCoords(
+        x,
+        y,
+        board[0].length,
+        board.length
+      );
+      surroundingCoords.forEach((coord) => {
+        const [nextX, nextY] = coord.split("-").map(Number);
+        if (!board[nextY][nextX].isRevealed) get().revealSquare(nextX, nextY);
+      });
+    } else {
+      if (!board[y][x].isRevealed)
+        set((state) => {
+          const newBoard = [...state.board];
+          newBoard[y][x].isRevealed = true;
+          return {
+            ...state,
+            board: newBoard,
+            revealedSquares: state.revealedSquares + 1,
+          };
+        });
+    }
+  },
+  revealSurroundingSquares: (x, y) => {
+    const { width, height } = get().gameSettings;
+    const surroundingCoords = getSurroundingCoords(x, y, width, height);
+    surroundingCoords.forEach((coord) => {
+      const [adjacentX, adjacentY] = coord.split("-").map(Number);
+      get().revealSquare(adjacentX, adjacentY);
+    });
+  },
+  toggleIsFlaggedAt: (x, y, prevIsFlagged) => {
+    const surroundingCoords = getSurroundingCoords(
+      x,
+      y,
+      get().gameSettings.width,
+      get().gameSettings.height
+    );
+    set({
+      board: get().board.map((row, newBoardY) => {
+        return row.map((square, newBoardX) => {
+          if (newBoardX === x && newBoardY === y) {
+            return { ...square, isFlagged: !prevIsFlagged };
+          } else if (surroundingCoords.has(`${newBoardX}-${newBoardY}`)) {
+            return {
+              ...square,
+              surroundingFlagCount: prevIsFlagged
+                ? square.surroundingFlagCount - 1
+                : square.surroundingFlagCount + 1,
+            };
+          } else {
+            return square;
+          }
+        });
+      }),
+    });
+  },
+  setGameSettings: (newGameSettings) => {
+    set({ gameSettings: newGameSettings });
   },
 }));
 
@@ -93,4 +169,25 @@ const getSurroundingCoords = (
   }
 
   return surroundingCoordsSet;
+};
+
+// Randomly generates bomb coords such that none are on the first square clicked
+// or any surrounding squares
+const generateBombCoords = (startXIndex: number, startYIndex: number) => {
+  const { gameSettings } = useGameStateStore.getState();
+  const bombCoordsSet = new Set<string>();
+  const coordsInRangeOfStart = getSurroundingCoords(
+    startXIndex,
+    startYIndex,
+    gameSettings.width,
+    gameSettings.height
+  );
+  coordsInRangeOfStart.add(`${startXIndex}-${startYIndex}`);
+  while (bombCoordsSet.size < gameSettings.mineCount) {
+    const bombX = Math.floor(Math.random() * gameSettings.width);
+    const bombY = Math.floor(Math.random() * gameSettings.height);
+    if (!coordsInRangeOfStart.has(`${bombX}-${bombY}`))
+      bombCoordsSet.add(`${bombX}-${bombY}`);
+  }
+  return bombCoordsSet;
 };
