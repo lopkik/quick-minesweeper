@@ -14,6 +14,7 @@ export const Square = (props: SquareProps) => {
     revealSurroundingSquares,
     toggleIsFlaggedAt,
     checkWinCondition,
+    startTimer,
   } = useGameStateStore();
 
   return (
@@ -22,13 +23,14 @@ export const Square = (props: SquareProps) => {
         if (gameStatus === "WAITING_TO_BEGIN") {
           generateStartingBoard(x, y);
           revealSquare(x, y);
+          startTimer();
         } else if (gameStatus === "RUNNING") {
           if (isRevealed && surroundingFlagCount >= value) {
             revealSurroundingSquares(x, y);
           } else if (!isFlagged) {
             revealSquare(x, y);
-            checkWinCondition();
           }
+          checkWinCondition();
         }
       }}
       onContextMenu={(e) => {

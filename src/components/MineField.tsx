@@ -1,13 +1,9 @@
 import { useGameStateStore } from "../gameStateStore";
 import { Square } from "./Square";
 
-interface MineFieldProps {
-  board: BoardSquare[][];
-}
-
-export const MineField = (props: MineFieldProps) => {
-  const { board } = props;
+export const MineField = () => {
   const { width } = useGameStateStore((state) => state.gameSettings);
+  const board = useGameStateStore((state) => state.board);
 
   return (
     <div

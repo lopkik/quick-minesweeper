@@ -1,20 +1,27 @@
 import { create } from "zustand";
 import { BOMB_VALUE, initialBoard } from "./constants";
 
+let intervalId: number | undefined;
 interface GameState {
+  board: BoardSquare[][];
   gameSettings: GameSettings;
   gameStatus: GameStatus;
   revealedSquares: number;
-  board: BoardSquare[][];
+  flaggedSquares: number;
+  secondsElapsed: number;
   checkWinCondition: () => void;
   generateStartingBoard: (startXIndex: number, startYIndex: number) => void;
   revealSquare: (x: number, y: number) => void;
   revealSurroundingSquares: (x: number, y: number) => void;
   toggleIsFlaggedAt: (x: number, y: number, prevIsFlagged: boolean) => void;
   setGameSettings: (newGameSettings: GameSettings) => void;
+  startTimer: () => void;
+  stopTimer: () => void;
+  setNewBoard: (width: number, height: number, mineCount: number) => void;
 }
 
 export const useGameStateStore = create<GameState>((set, get) => ({
+  board: initialBoard,
   gameSettings: {
     width: 10,
     height: 10,
@@ -22,14 +29,17 @@ export const useGameStateStore = create<GameState>((set, get) => ({
   },
   gameStatus: "WAITING_TO_BEGIN",
   revealedSquares: 0,
-  board: initialBoard,
+  flaggedSquares: 0,
+  secondsElapsed: 0,
   checkWinCondition: () => {
     const {
       revealedSquares,
       gameSettings: { width, height, mineCount },
     } = get();
-    if (width * height - revealedSquares === mineCount)
+    if (width * height - revealedSquares === mineCount) {
+      get().stopTimer();
       set({ gameStatus: "WON" });
+    }
   },
   generateStartingBoard: (startXIndex, startYIndex) => {
     const { width, height } = get().gameSettings;
@@ -138,10 +148,49 @@ export const useGameStateStore = create<GameState>((set, get) => ({
           }
         });
       }),
+      flaggedSquares: prevIsFlagged
+        ? get().flaggedSquares - 1
+        : get().flaggedSquares + 1,
     });
   },
   setGameSettings: (newGameSettings) => {
     set({ gameSettings: newGameSettings });
+  },
+  startTimer: () => {
+    if (!intervalId) {
+      intervalId = setInterval(
+        () => set((state) => ({ secondsElapsed: state.secondsElapsed + 1 })),
+        1000
+      );
+    }
+  },
+  stopTimer: () => {
+    clearInterval(intervalId);
+    intervalId = undefined;
+  },
+  setNewBoard: (width, height, mineCount) => {
+    const newBoard: BoardSquare[][] = [];
+    for (let y = 0; y < height; y++) {
+      newBoard[y] = [];
+      for (let x = 0; x < width; x++) {
+        newBoard[y].push({
+          isRevealed: false,
+          isFlagged: false,
+          value: 0,
+          surroundingFlagCount: 0,
+        });
+      }
+    }
+
+    get().stopTimer();
+    set({
+      board: newBoard,
+      gameSettings: { width, height, mineCount },
+      gameStatus: "WAITING_TO_BEGIN",
+      revealedSquares: 0,
+      flaggedSquares: 0,
+      secondsElapsed: 0,
+    });
   },
 }));
 
