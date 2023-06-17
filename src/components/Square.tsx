@@ -1,9 +1,22 @@
+import { BOMB_VALUE } from "../constants";
 import { useGameStateStore } from "../gameStateStore";
 
 interface SquareProps extends BoardSquare {
   x: number;
   y: number;
 }
+
+const getTextFromValue = (value: number) => {
+  if (value === BOMB_VALUE) return "💣";
+  if (value === 0) return "";
+  return `${value}`;
+};
+
+const getBackgroundColor = (isRevealed: boolean, value: number) => {
+  if (!isRevealed) return "lightgray";
+  if (value === BOMB_VALUE) return "red";
+  return "darkgray";
+};
 
 export const Square = (props: SquareProps) => {
   const { isRevealed, isFlagged, value, surroundingFlagCount, x, y } = props;
@@ -19,6 +32,7 @@ export const Square = (props: SquareProps) => {
 
   return (
     <div
+      className="square"
       onClick={() => {
         if (gameStatus === "WAITING_TO_BEGIN") {
           generateStartingBoard(x, y);
@@ -39,19 +53,11 @@ export const Square = (props: SquareProps) => {
           toggleIsFlaggedAt(x, y, isFlagged);
       }}
       style={{
-        backgroundColor: isRevealed ? "green" : "red",
-        width: 50,
-        height: 50,
-        border: "1px solid black",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        fontWeight: isFlagged ? "bold" : "normal",
-        cursor: "pointer",
+        backgroundColor: getBackgroundColor(isRevealed, value),
       }}
     >
-      {value === -1 ? "BBB" : value}
-      f: {surroundingFlagCount}
+      {isFlagged && <span>🚩</span>}
+      {isRevealed && <span>{getTextFromValue(value)}</span>}
     </div>
   );
 };

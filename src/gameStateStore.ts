@@ -38,7 +38,21 @@ export const useGameStateStore = create<GameState>((set, get) => ({
     } = get();
     if (width * height - revealedSquares === mineCount) {
       get().stopTimer();
-      set({ gameStatus: "WON" });
+      // flag any remaining unflagged bombs and win game
+      set((state) => {
+        const newBoard = [...state.board];
+        for (let y = 0; y < get().gameSettings.height; y++) {
+          for (let x = 0; x < get().gameSettings.width; x++) {
+            if (newBoard[y][x].value === -1) newBoard[y][x].isFlagged = true;
+          }
+        }
+        return {
+          ...state,
+          board: newBoard,
+          flaggedSquares: state.gameSettings.mineCount,
+          gameStatus: "WON",
+        };
+      });
     }
   },
   generateStartingBoard: (startXIndex, startYIndex) => {
@@ -79,11 +93,22 @@ export const useGameStateStore = create<GameState>((set, get) => ({
     const board = get().board;
     if (board[y][x].isFlagged) return;
     if (board[y][x].value === BOMB_VALUE) {
+      get().stopTimer();
       // lose the game, reveal all bombs
-      set({ gameStatus: "LOST" });
-      return;
-    }
-    if (board[y][x].value === 0 && !board[y][x].isRevealed) {
+      set((state) => {
+        const newBoard = [...state.board];
+        for (let y = 0; y < get().gameSettings.height; y++) {
+          for (let x = 0; x < get().gameSettings.width; x++) {
+            if (newBoard[y][x].value === -1) newBoard[y][x].isRevealed = true;
+          }
+        }
+        return {
+          ...state,
+          board: newBoard,
+          gameStatus: "LOST",
+        };
+      });
+    } else if (board[y][x].value === 0 && !board[y][x].isRevealed) {
       set((state) => {
         const newBoard = [...state.board];
         newBoard[y][x].isRevealed = true;
