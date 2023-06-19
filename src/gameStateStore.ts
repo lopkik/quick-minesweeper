@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { BOMB_VALUE, initialBoard } from "./constants";
 
-let intervalId: number | undefined;
+let intervalId: NodeJS.Timer | undefined;
 interface GameState {
   board: BoardSquare[][];
   gameSettings: GameSettings;

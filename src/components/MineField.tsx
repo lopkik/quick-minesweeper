@@ -7,7 +7,8 @@ export const MineField = () => {
 
   return (
     <div
-      style={{ display: "grid", gridTemplateColumns: `repeat(${width}, 1fr)` }}
+      className="minefield"
+      style={{ gridTemplateColumns: `repeat(${width}, 1fr)` }}
     >
       {board.map((row, y) => {
         return row.map(

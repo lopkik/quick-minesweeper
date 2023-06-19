@@ -1,4 +1,3 @@
-import React from "react";
 import { useGameStateStore } from "../gameStateStore";
 
 export const MineFieldHeader = () => {
@@ -9,6 +8,7 @@ export const MineFieldHeader = () => {
         display: "flex",
         justifyContent: "space-between",
         fontSize: "2rem",
+        padding: "1rem 0.5rem",
       }}
     >
       <div>🚩 {gameSettings.mineCount - flaggedSquares}</div>

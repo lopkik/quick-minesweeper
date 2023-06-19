@@ -13,9 +13,8 @@ const getTextFromValue = (value: number) => {
 };
 
 const getBackgroundColor = (isRevealed: boolean, value: number) => {
-  if (!isRevealed) return "lightgray";
-  if (value === BOMB_VALUE) return "red";
-  return "darkgray";
+  if (isRevealed && value === BOMB_VALUE) return "red";
+  return "#bdbdbd";
 };
 
 export const Square = (props: SquareProps) => {
@@ -52,6 +51,8 @@ export const Square = (props: SquareProps) => {
         if (gameStatus === "RUNNING" && !isRevealed)
           toggleIsFlaggedAt(x, y, isFlagged);
       }}
+      data-is-revealed={isRevealed}
+      data-value={value}
       style={{
         backgroundColor: getBackgroundColor(isRevealed, value),
       }}

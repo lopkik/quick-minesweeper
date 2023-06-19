@@ -31,12 +31,65 @@ body {
   align-items: center;
 }
 
+.minefield {
+  display: grid;
+  border-top: 5px solid #7b7b7b;
+  border-left: 5px solid #7b7b7b;
+  border-right: 5px solid white;
+  border-bottom: 5px solid white;
+}
+
+@font-face {
+  font-family: "MINESWEEPER";
+  font-style: normal;
+  src: local("MINESWEEPER"), url(@/assets/mine-sweeper.otf) format("opentype");
+}
+
 .square {
+  font-family: "MINESWEEPER";
   width: 50px;
   height: 50px;
-  border: 1px solid black;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
+  box-sizing: border-box;
+  font-size: 1.5rem;
+  transition: border 0.4s ease-out;
+}
+
+.square[data-is-revealed="false"] {
+  border-top: 5px solid white;
+  border-left: 5px solid white;
+  border-right: 5px solid #7b7b7b;
+  border-bottom: 5px solid #7b7b7b;
+}
+
+.square[data-is-revealed="true"] {
+  border: 1px solid #7b7b7b;
+}
+
+.square[data-value="1"] {
+  color: blue;
+}
+.square[data-value="2"] {
+  color: green;
+}
+.square[data-value="3"] {
+  color: red;
+}
+.square[data-value="4"] {
+  color: #000084;
+}
+.square[data-value="5"] {
+  color: #840000;
+}
+.square[data-value="6"] {
+  color: #008284;
+}
+.square[data-value="7"] {
+  color: #840084;
+}
+.square[data-value="8"] {
+  color: #757575;
 }

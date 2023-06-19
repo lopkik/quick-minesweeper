@@ -3,13 +3,11 @@ import { useGameStateStore } from "./gameStateStore";
 import { MineFieldHeader } from "./components/MineFieldHeader";
 
 function App() {
-  const { gameStatus, revealedSquares, setNewBoard } = useGameStateStore();
+  const { setNewBoard } = useGameStateStore();
 
   return (
     <div className="app">
       <div className="app-header">
-        {gameStatus}
-        {revealedSquares}
         <button onClick={() => setNewBoard(10, 10, 10)}>
           Beginner (10x10 w/ 10 mines)
         </button>
@@ -21,7 +19,7 @@ function App() {
         </button>
       </div>
       <div className="app-body">
-        <div>
+        <div style={{ backgroundColor: "lightgray", padding: "1rem" }}>
           <MineFieldHeader />
           <MineField />
         </div>
