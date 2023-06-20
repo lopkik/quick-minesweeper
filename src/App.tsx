@@ -1,13 +1,14 @@
-import { MineField } from "./components/MineField";
-import { useGameStateStore } from "./gameStateStore";
-import { MineFieldHeader } from "./components/MineFieldHeader";
+import { MineField } from "./components/MineField"
+import { useGameStateStore } from "./gameStateStore"
+import { MineFieldHeader } from "./components/MineFieldHeader"
+import { NewGameDialog } from "./components/NewGameDialog"
 
 function App() {
-  const { setNewBoard } = useGameStateStore();
+  const { setNewBoard } = useGameStateStore()
 
   return (
-    <div className="app">
-      <div className="app-header">
+    <div className='app'>
+      <div className='app-header'>
         <button onClick={() => setNewBoard(10, 10, 10)}>
           Beginner (10x10 w/ 10 mines)
         </button>
@@ -18,14 +19,15 @@ function App() {
           Expert (30x16 w/ 99 mines)
         </button>
       </div>
-      <div className="app-body">
+      <NewGameDialog />
+      <div className='app-body'>
         <div style={{ backgroundColor: "lightgray", padding: "1rem" }}>
           <MineFieldHeader />
           <MineField />
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
