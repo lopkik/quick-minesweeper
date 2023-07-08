@@ -9,6 +9,19 @@ body {
   height: 100%;
 }
 
+button {
+  color: black;
+  background-color: lightgray;
+  border: 5px solid black;
+  border-radius: 20px;
+  padding: 1rem;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: white;
+}
+
 .app {
   display: flex;
   flex-direction: column;
@@ -17,7 +30,7 @@ body {
 
 .app-header {
   width: 100%;
-  background-color: pink;
+  background-color: darkgray;
   display: flex;
   justify-content: space-around;
   align-items: center;
@@ -26,9 +39,6 @@ body {
 
 .app-body {
   flex-grow: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .minefield {
@@ -118,7 +128,7 @@ dialog:modal {
 
 .dialog-content {
   background-color: white;
-  padding: 1rem;
+  padding: 1rem 2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
