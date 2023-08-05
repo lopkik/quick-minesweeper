@@ -7,7 +7,7 @@ function App() {
   const setNewBoard = useGameStateStore((state) => state.setNewBoard)
 
   return (
-    <div className='app'>
+    <div className='flex flex-col h-full'>
       <div className='app-header'>
         <button onClick={() => setNewBoard(10, 10, 10)}>
           Beginner (10x10 w/ 10 mines)
@@ -21,32 +21,21 @@ function App() {
       </div>
       <NewGameDialog />
       <div className='app-body'>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "75% 25%",
-            height: "100%",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              height: "100%",
-            }}
-          >
-            <div
-              style={{
-                backgroundColor: "lightgray",
-                padding: "1rem",
-              }}
-            >
-              <MineFieldHeader />
-              <MineField />
+        <div className='h-full'>
+          <div className='w-3/4 inline-block'>
+            <div className='flex justify-center items-center'>
+              <div
+                style={{
+                  backgroundColor: "lightgray",
+                  padding: "1rem",
+                }}
+              >
+                <MineFieldHeader />
+                <MineField />
+              </div>
             </div>
           </div>
-          <div style={{ display: "flex", flexDirection: "column" }}>
+          <div className='w-1/4 flex-col inline-block'>
             <div
               style={{
                 border: "5px dotted gray",
