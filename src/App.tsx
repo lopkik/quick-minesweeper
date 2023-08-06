@@ -1,14 +1,14 @@
-import { MineField } from "./components/MineField"
-import { useGameStateStore } from "./gameStateStore"
-import { MineFieldHeader } from "./components/MineFieldHeader"
-import { NewGameDialog } from "./components/NewGameDialog"
+import { MineField } from "@components/MineField"
+import { useGameStateStore } from "@store/gameStateStore"
+import { MineFieldHeader } from "@components/MineFieldHeader"
+import { NewGameDialog } from "@components/NewGameDialog"
 
 function App() {
   const setNewBoard = useGameStateStore((state) => state.setNewBoard)
 
   return (
     <div className='flex flex-col h-full'>
-      <div className='app-header'>
+      <div className='w-full flex justify-around items-center py-4 bg-neutral-400'>
         <button onClick={() => setNewBoard(10, 10, 10)}>
           Beginner (10x10 w/ 10 mines)
         </button>
@@ -20,7 +20,7 @@ function App() {
         </button>
       </div>
       <NewGameDialog />
-      <div className='app-body'>
+      <div className='grow'>
         <div className='h-full'>
           <div className='w-3/4 inline-block'>
             <div className='flex justify-center items-center'>

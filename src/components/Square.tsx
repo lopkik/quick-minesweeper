@@ -1,24 +1,24 @@
-import { BOMB_VALUE } from "../constants";
-import { useGameStateStore } from "../gameStateStore";
+import { BOMB_VALUE } from "@constants"
+import { useGameStateStore } from "@store/gameStateStore"
 
 interface SquareProps extends BoardSquare {
-  x: number;
-  y: number;
+  x: number
+  y: number
 }
 
 const getTextFromValue = (value: number) => {
-  if (value === BOMB_VALUE) return "💣";
-  if (value === 0) return "";
-  return `${value}`;
-};
+  if (value === BOMB_VALUE) return "💣"
+  if (value === 0) return ""
+  return `${value}`
+}
 
 const getBackgroundColor = (isRevealed: boolean, value: number) => {
-  if (isRevealed && value === BOMB_VALUE) return "red";
-  return "#bdbdbd";
-};
+  if (isRevealed && value === BOMB_VALUE) return "red"
+  return "#bdbdbd"
+}
 
 export const Square = (props: SquareProps) => {
-  const { isRevealed, isFlagged, value, surroundingFlagCount, x, y } = props;
+  const { isRevealed, isFlagged, value, surroundingFlagCount, x, y } = props
   const {
     gameStatus,
     generateStartingBoard,
@@ -27,29 +27,29 @@ export const Square = (props: SquareProps) => {
     toggleIsFlaggedAt,
     checkWinCondition,
     startTimer,
-  } = useGameStateStore();
+  } = useGameStateStore()
 
   return (
     <div
-      className="square"
+      className='square'
       onClick={() => {
         if (gameStatus === "WAITING_TO_BEGIN") {
-          generateStartingBoard(x, y);
-          revealSquare(x, y);
-          startTimer();
+          generateStartingBoard(x, y)
+          revealSquare(x, y)
+          startTimer()
         } else if (gameStatus === "RUNNING") {
           if (isRevealed && surroundingFlagCount >= value) {
-            revealSurroundingSquares(x, y);
+            revealSurroundingSquares(x, y)
           } else if (!isFlagged) {
-            revealSquare(x, y);
+            revealSquare(x, y)
           }
-          checkWinCondition();
+          checkWinCondition()
         }
       }}
       onContextMenu={(e) => {
-        e.preventDefault();
+        e.preventDefault()
         if (gameStatus === "RUNNING" && !isRevealed)
-          toggleIsFlaggedAt(x, y, isFlagged);
+          toggleIsFlaggedAt(x, y, isFlagged)
       }}
       data-is-revealed={isRevealed}
       data-value={value}
@@ -60,5 +60,5 @@ export const Square = (props: SquareProps) => {
       {isFlagged && <span>🚩</span>}
       {isRevealed && <span>{getTextFromValue(value)}</span>}
     </div>
-  );
-};
+  )
+}

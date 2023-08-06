@@ -1,7 +1,7 @@
-import { useGameStateStore } from "../gameStateStore";
+import { useGameStateStore } from "@store/gameStateStore"
 
 export const MineFieldHeader = () => {
-  const { gameSettings, flaggedSquares, secondsElapsed } = useGameStateStore();
+  const { gameSettings, flaggedSquares, secondsElapsed } = useGameStateStore()
   return (
     <div
       style={{
@@ -14,5 +14,5 @@ export const MineFieldHeader = () => {
       <div>🚩 {gameSettings.mineCount - flaggedSquares}</div>
       <div>⏱️ {secondsElapsed}</div>
     </div>
-  );
-};
+  )
+}

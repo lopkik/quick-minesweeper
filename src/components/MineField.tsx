@@ -1,13 +1,13 @@
-import { useGameStateStore } from "../gameStateStore";
-import { Square } from "./Square";
+import { useGameStateStore } from "@store/gameStateStore"
+import { Square } from "@components/Square"
 
 export const MineField = () => {
-  const { width } = useGameStateStore((state) => state.gameSettings);
-  const board = useGameStateStore((state) => state.board);
+  const { width } = useGameStateStore((state) => state.gameSettings)
+  const board = useGameStateStore((state) => state.board)
 
   return (
     <div
-      className="minefield"
+      className='minefield'
       style={{ gridTemplateColumns: `repeat(${width}, 1fr)` }}
     >
       {board.map((row, y) => {
@@ -23,8 +23,8 @@ export const MineField = () => {
               surroundingFlagCount={surroundingFlagCount}
             />
           )
-        );
+        )
       })}
     </div>
-  );
-};
+  )
+}

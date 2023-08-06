@@ -1,5 +1,5 @@
 import { create } from "zustand"
-import { BOMB_VALUE, initialBoard } from "./constants"
+import { BOMB_VALUE, initialBoard } from "@constants"
 
 let intervalId: NodeJS.Timer | undefined
 interface GameState {

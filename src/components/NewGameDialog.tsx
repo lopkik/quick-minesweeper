@@ -1,5 +1,5 @@
 import React from "react"
-import { useGameStateStore } from "../gameStateStore"
+import { useGameStateStore } from "../store/gameStateStore"
 
 export const NewGameDialog = () => {
   const dialogRef = React.useRef<HTMLDialogElement>(null)
