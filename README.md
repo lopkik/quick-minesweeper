@@ -10,3 +10,6 @@ Todo:
   - display time taken, win/loss, board size
   - sort by datetime played, time taken
   - filter by board size
+- create seeding system (sequence of numbers creates a valid minesweeper board)
+- make it impossible to select text within the board
+- implement left and right click on square (FOR AUTHENTICITY!!!)

@@ -2,6 +2,7 @@ import { MineField } from "@components/MineField"
 import { useGameStateStore } from "@store/gameStateStore"
 import { MineFieldHeader } from "@components/MineFieldHeader"
 import { NewGameDialog } from "@components/NewGameDialog"
+import { GameRecordList } from "./components/GameRecordList"
 
 function App() {
   const setNewBoard = useGameStateStore((state) => state.setNewBoard)
@@ -36,13 +37,7 @@ function App() {
             </div>
           </div>
           <div className='w-1/4 flex-col inline-block'>
-            <div
-              style={{
-                border: "5px dotted gray",
-                padding: "1rem",
-                margin: "1rem",
-              }}
-            >
+            <div className='p-4 m-4 border-dotted border-8 border-neutral-500'>
               <h2>
                 <u>Help/About</u>
               </h2>
@@ -55,6 +50,9 @@ function App() {
               <p>
                 <b>Right Click</b> to flag an unrevealed square
               </p>
+            </div>
+            <div className='p-4 m-4 border-dotted border-8 border-neutral-500'>
+              <GameRecordList />
             </div>
           </div>
         </div>

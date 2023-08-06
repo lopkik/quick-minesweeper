@@ -1,5 +1,6 @@
 import { create } from "zustand"
 import { BOMB_VALUE, initialBoard } from "@constants"
+import { useGameRecordStore } from "@store/gameRecordStore"
 
 let intervalId: NodeJS.Timer | undefined
 interface GameState {
@@ -40,6 +41,9 @@ export const useGameStateStore = create<GameState>((set, get) => ({
     if (width * height - revealedSquares === mineCount) {
       get().stopTimer()
       // flag any remaining unflagged bombs and win game
+      useGameRecordStore
+        .getState()
+        .addGameRecord(true, `${width} x ${height}`, get().secondsElapsed)
       set((state) => {
         const newBoard = [...state.board]
         for (let y = 0; y < get().gameSettings.height; y++) {
@@ -96,6 +100,13 @@ export const useGameStateStore = create<GameState>((set, get) => ({
     if (board[y][x].value === BOMB_VALUE) {
       get().stopTimer()
       // lose the game, reveal all bombs
+      useGameRecordStore
+        .getState()
+        .addGameRecord(
+          false,
+          `${board.length} x ${board[0].length}`,
+          get().secondsElapsed
+        )
       set((state) => {
         const newBoard = [...state.board]
         for (let y = 0; y < get().gameSettings.height; y++) {
